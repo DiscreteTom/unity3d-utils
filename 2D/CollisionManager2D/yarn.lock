@@ -2,6 +2,6 @@
 # yarn lockfile v1
 
 
-"dt.general.layer-mask-extension@https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/LayerExtension?main":
+"dt.general.layer-mask-extension@https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/LayerMaskExtension?main":
   version "0.0.1"
-  resolved "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/LayerExtension?main#6544b1c6d360fd67b6790980e7a0f0eba4c4aa14"
+  resolved "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/LayerMaskExtension?main#a6ce1df4a4fe2fc6a6f430cd37034b49a5e7ad24"

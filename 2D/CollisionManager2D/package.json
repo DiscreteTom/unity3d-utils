@@ -4,6 +4,6 @@
   "author": "DiscreteTom",
   "license": "MIT",
   "dependencies": {
-    "dt.general.layer-mask-extension": "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/LayerExtension?main"
+    "dt.general.layer-mask-extension": "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/LayerMaskExtension?main"
   }
 }
