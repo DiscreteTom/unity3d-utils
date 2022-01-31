@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/LayerExtension?main"
+yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/LayerMaskExtension?main"
 ```
 
 ## Usage
