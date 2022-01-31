@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace DT.General
 {
-  public static class LayerExtension
+  public static class LayerMaskExtension
   {
     public static bool Contains(this LayerMask mask, int target)
     {
