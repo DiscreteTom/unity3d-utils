@@ -1,0 +1,9 @@
+{
+  "name": "dt.2d.collision-manager-2d",
+  "version": "0.0.1",
+  "author": "DiscreteTom",
+  "license": "MIT",
+  "dependencies": {
+    "dt.general.layer-mask-extension": "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/LayerExtension?main"
+  }
+}
