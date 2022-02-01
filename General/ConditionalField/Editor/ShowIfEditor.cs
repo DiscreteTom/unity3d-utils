@@ -8,9 +8,17 @@ namespace DT.General.ConditionalField
   {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
-      if (ConditionChecker.Check(((ShowIfAttribute)this.attribute).condition, property))
+      var attr = (ShowIfAttribute)this.attribute;
+      if (ConditionChecker.Check(attr.condition, property))
       {
-        EditorGUI.PropertyField(position, property, label, true);
+        if (attr.enableCondition == "" || ConditionChecker.Check(attr.enableCondition, property))
+          EditorGUI.PropertyField(position, property, label, true);
+        else
+        {
+          EditorGUI.BeginDisabledGroup(true);
+          EditorGUI.PropertyField(position, property, label, true);
+          EditorGUI.EndDisabledGroup();
+        }
       }
     }
 

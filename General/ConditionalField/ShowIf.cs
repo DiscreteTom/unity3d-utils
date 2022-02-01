@@ -8,10 +8,12 @@ namespace DT.General
   public class ShowIfAttribute : PropertyAttribute
   {
     public string condition { get; private set; }
+    public string enableCondition { get; private set; }
 
-    public ShowIfAttribute(string fieldOrMethod)
+    public ShowIfAttribute(string condition, string enableCondition = "")
     {
-      this.condition = fieldOrMethod;
+      this.condition = condition;
+      this.enableCondition = enableCondition;
     }
   }
 }
