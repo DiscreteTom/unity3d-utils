@@ -28,10 +28,7 @@ public class Test : MonoBehaviour
   public int bbb;
 
   // method can also be the condition
-  public bool ComplexCondition()
-  {
-    return this.aaa > 0;
-  }
+  public bool ComplexCondition() => aaa > 0;
 
   // enable this field if ComplexCondition returns true
   [EnableIf("ComplexCondition")]
