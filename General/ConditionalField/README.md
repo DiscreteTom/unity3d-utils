@@ -5,7 +5,7 @@ Hide or disable class field in the Unity3D Editor Inspector using attributes.
 ## Installation
 
 ```bash
-yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/ConditionalField?main"
+yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/ConditionalField?conditional-field-0.1.1"
 ```
 
 ## Usage
