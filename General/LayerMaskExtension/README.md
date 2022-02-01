@@ -1,5 +1,7 @@
 # LayerMaskExtension
 
+Help you to check whether a layer mask contains a layer.
+
 ## Installation
 
 ```bash

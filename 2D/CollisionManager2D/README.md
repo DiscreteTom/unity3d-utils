@@ -1,5 +1,7 @@
 # CollisionManager2D
 
+Provide the ability to edit collision/trigger events in editor.
+
 ## Installation
 
 ```bash
