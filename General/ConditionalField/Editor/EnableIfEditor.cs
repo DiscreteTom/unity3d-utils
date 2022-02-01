@@ -8,7 +8,7 @@ namespace DT.General.ConditionalField
   {
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
-      if (ConditionChecker.Check(this.attribute as EnableIfAttribute, property))
+      if (ConditionChecker.Check(((EnableIfAttribute)this.attribute).condition, property))
       {
         EditorGUI.PropertyField(position, property, label, true);
       }

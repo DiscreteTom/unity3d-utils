@@ -43,26 +43,21 @@ namespace DT.General.ConditionalField
     }
   }
 
-  public interface IConditionalField
-  {
-    string condition { get; }
-  }
-
   public static class ConditionChecker
   {
-    public static bool Check(IConditionalField attribute, SerializedProperty property)
+    public static bool Check(string attribute, SerializedProperty property)
     {
       var target = property.serializedObject.targetObject;
 
       // if the condition is a field
-      FieldInfo conditionField = ReflectionHelper.GetField(target, attribute.condition);
+      FieldInfo conditionField = ReflectionHelper.GetField(target, attribute);
       if (conditionField != null && conditionField.FieldType == typeof(bool))
       {
         return (bool)conditionField.GetValue(target);
       }
 
       // if the condition is a method
-      MethodInfo conditionMethod = ReflectionHelper.GetMethod(target, attribute.condition);
+      MethodInfo conditionMethod = ReflectionHelper.GetMethod(target, attribute);
       if (conditionMethod != null && conditionMethod.ReturnType == typeof(bool) && conditionMethod.GetParameters().Length == 0)
       {
         return (bool)conditionMethod.Invoke(target, null);

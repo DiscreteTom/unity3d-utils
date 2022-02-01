@@ -5,7 +5,7 @@ using DT.General.ConditionalField;
 namespace DT.General
 {
   [AttributeUsage(AttributeTargets.Field)]
-  public class ShowIfAttribute : PropertyAttribute, IConditionalField
+  public class ShowIfAttribute : PropertyAttribute
   {
     public string condition { get; private set; }
 
