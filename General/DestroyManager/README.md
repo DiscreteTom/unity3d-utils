@@ -5,7 +5,7 @@ Destroy or set destroy event handler in Unity3D inspector.
 ## Installation
 
 ```bash
-yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/DestroyManager?main"
+yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/DestroyManager?destroy-manager-0.1.0"
 ```
 
 ## Usage
