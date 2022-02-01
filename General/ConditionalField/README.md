@@ -31,9 +31,8 @@ public class Test : MonoBehaviour
   [EnableIf("notCondition")]
   public int ccc;
 
-  // use both EnableIf & ShowIf
-  [EnableIf("condition1")]
-  [ShowIf("condition2")]
+  // show if condition1, enable if condition2
+  [ShowIf("condition1", "condition2")]
   public int ddd;
 }
 ```
