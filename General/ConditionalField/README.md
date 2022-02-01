@@ -33,7 +33,7 @@ public class Test : MonoBehaviour
     return this.aaa > 0;
   }
 
-  // enable this if ComplexCondition returns true
+  // enable this field if ComplexCondition returns true
   [EnableIf("ComplexCondition")]
   public int ccc;
 }
