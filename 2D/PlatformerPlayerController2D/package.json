@@ -1,0 +1,11 @@
+{
+  "name": "dt.2d.platformer-player-controller-2d",
+  "version": "0.1.0",
+  "author": "DiscreteTom",
+  "license": "MIT",
+  "dependencies": {
+    "dt.general.collision-checker": "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/CollisionChecker?collision-checker-0.1.0",
+    "dt.general.input-helper": "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/InputHelper?input-helper-0.1.1",
+    "dt.general.timer": "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/Timer?timer-0.1.0"
+  }
+}
