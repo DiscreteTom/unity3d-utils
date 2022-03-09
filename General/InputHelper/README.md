@@ -5,7 +5,7 @@ Allow you to check a list of axis/button names.
 ## Installation
 
 ```bash
-yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/InputHelper?input-helper-0.1.0"
+yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/InputHelper?input-helper-0.1.1"
 ```
 
 ## Usage
