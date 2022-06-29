@@ -9,7 +9,7 @@ Unity3D utils.
 1. Install [yarn](https://yarnpkg.com/).
 2. Create a folder in your Unity3D project, e.g. `Assets/Modules/`.
 3. In that folder, run `yarn init -y`.
-4. Now you can install those utils, e.g. `yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/LayerMaskExtension?main"`
+4. Now you can install those utils, e.g. `yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/LayerMaskExtension?layer-mask-extension-0.1.0"`
 5. After installation, you can use the utils in your project!
 
 ![](./img/0.png)
