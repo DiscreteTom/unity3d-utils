@@ -2,38 +2,42 @@ using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class DestroyManager : MonoBehaviour
+namespace DT.General
 {
-  public bool destroyOnInvisible = false;
-  public bool destroyOnTime = false;
-  [ShowIf("destroyOnTime")]
-  [SerializeField] float TTL = 5;
-  [SerializeField] UnityEvent onDestroy;
-
-  void Update()
+  public class DestroyManager : MonoBehaviour
   {
-    if (this.destroyOnTime)
+    public bool destroyOnInvisible = false;
+    public bool destroyOnTime = false;
+    [ShowIf("destroyOnTime")]
+    [SerializeField] float TTL = 5;
+    [SerializeField] UnityEvent onDestroy;
+
+    void Update()
     {
-      this.TTL -= Time.deltaTime;
-      if (this.TTL <= 0) Destroy(this.gameObject);
+      if (this.destroyOnTime)
+      {
+        this.TTL -= Time.deltaTime;
+        if (this.TTL <= 0) Destroy(this.gameObject);
+      }
+    }
+
+    void OnDestroy()
+    {
+      this.onDestroy?.Invoke();
+    }
+
+    public void DestroyGameObject()
+    {
+      Destroy(this.gameObject);
+    }
+
+    void OnBecameInvisible()
+    {
+      if (this.destroyOnInvisible)
+      {
+        this.DestroyGameObject();
+      }
     }
   }
 
-  void OnDestroy()
-  {
-    this.onDestroy?.Invoke();
-  }
-
-  public void DestroyGameObject()
-  {
-    Destroy(this.gameObject);
-  }
-
-  void OnBecameInvisible()
-  {
-    if (this.destroyOnInvisible)
-    {
-      this.DestroyGameObject();
-    }
-  }
 }
