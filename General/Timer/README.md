@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/Timer?timer-0.1.0"
+yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/Timer?timer-0.1.1"
 ```
 
 ## Usage
