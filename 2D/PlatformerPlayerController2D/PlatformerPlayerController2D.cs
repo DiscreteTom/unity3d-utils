@@ -1,20 +1,7 @@
-using DT.General;
-using NaughtyAttributes;
 using UnityEngine;
-using UnityEngine.Events;
 
-namespace DT._2D
-{
-  [RequireComponent(typeof(Rigidbody2D))]
-  [RequireComponent(typeof(SpriteRenderer))]
-  public class PlatformerPlayerController2D : MonoBehaviour
-  {
-    [Header("Input")]
-    [InputAxis]
-    public string[] horizontalAxisNames = new string[1] { "Horizontal" };
-    [InputAxis]
-    public string[] jumpButtonNames = new string[1] { "Jump" };
-
+namespace DT._2D {
+  public class PlatformerPlayerController2D : MonoBehaviour {
     [Header("Horizontal Move")]
     [Min(0)]
     public float maxHorizontalSpeed = 13;
@@ -36,152 +23,145 @@ namespace DT._2D
     [Min(0)]
     public float apexBonusTimeMs = 20;
     public bool holdButtonAutoJump = false;
-    [SerializeField] UnityEvent onJump = new UnityEvent();
-    public void OnJump(UnityAction f) => this.onJump.AddListener(f);
-    [SerializeField] UnityEvent onAirJump = new UnityEvent();
-    public void OnAirJump(UnityAction f) => this.onAirJump.AddListener(f);
 
     [Header("Ground Checker")]
-    public BaseCollisionChecker groundChecker;
     [Min(0)]
     public float coyoteTimeMs = 200;
     [Min(0)]
     public float coolDownAfterJumpMs = 50;
 
-    // expose some state
-    public float horizontalInput { get; private set; }
-    public bool grounded { get; private set; }
-
     // members to calculate velocity y
     float lastY;
     [HideInInspector] public int airJumpCountLeft;
-    TimeoutHandle apexBonusHandle;
-    Timer groundCheckerTimer;
-    Timer coyoteTimer;
+    float groundCheckerCDLeftMs;
+    bool shouldCoyoteTime;
+    float coyoteCDLeftMs;
+    float apexBonusCDLeftMs;
 
-    // other components
-    Rigidbody2D body;
-    SpriteRenderer sprite;
+    public struct MoveInput {
+      public float horizontal;
+      public bool jumpBtnDown;
+      public bool jumpBtnUp;
+      public bool jumpBtnHeld;
+      public bool grounded;
+      public Vector2 velocity;
+      public float gravityScale;
+      public float deltaTime;
+    }
+    public struct MoveResult {
+      public bool jumped;
+      public bool airJumped;
+      public float gravityScale;
+      public Vector2 velocity;
+    }
 
-    void Start()
-    {
-      this.sprite = this.GetComponent<SpriteRenderer>();
-      this.body = this.GetComponent<Rigidbody2D>();
-      this.body.gravityScale = this.normalGravityScale;
-      this.lastY = this.body.velocity.y;
+    public MoveResult Init(MoveInput input) {
+      this.lastY = input.velocity.y;
       this.airJumpCountLeft = this.maxAirJumpCount;
-      this.groundCheckerTimer = new Timer(0);
+      this.groundCheckerCDLeftMs = 0;
+      this.shouldCoyoteTime = false;
+      this.coyoteCDLeftMs = 0;
+      this.apexBonusCDLeftMs = 0;
+
+      return new MoveResult {
+        jumped = false,
+        airJumped = false,
+        gravityScale = this.normalGravityScale,
+        velocity = input.velocity,
+      };
     }
 
-    void Update()
-    {
-      // check collision
-      this.grounded = this.groundChecker.Check();
+    public MoveResult Move(MoveInput input) {
+      // init result
+      var result = new MoveResult() {
+        jumped = false,
+        airJumped = false,
+        velocity = input.velocity,
+        gravityScale = input.gravityScale,
+      };
 
-      // gather input
-      var jumpBtnDown = InputHelper.GetAnyButtonDown(this.jumpButtonNames);
-      var jumpBtnUp = InputHelper.GetAnyButtonUp(this.jumpButtonNames);
-      var jumpBtnHold = InputHelper.GetAnyButton(this.jumpButtonNames);
-      this.horizontalInput = InputHelper.GetAnyAxisRaw(this.horizontalAxisNames);
-
-      // calculate result
-      var x = this.CalculateX(this.body.velocity.x, this.horizontalInput);
-      var result = this.CalculateY(this.body.velocity.y, jumpBtnDown, jumpBtnUp, jumpBtnHold);
-
-      // apply result
-      this.body.velocity = new Vector2(x, result.y);
-      this.body.gravityScale = result.gravityScale;
-      if (result.jump) this.body.AddForce(this.jumpForce, ForceMode2D.Impulse);
-
-      // update sprite direction
-      if (this.horizontalInput > 0)
-      {
-        this.sprite.flipX = false;
+      // update timers
+      if (this.groundCheckerCDLeftMs > 0) this.groundCheckerCDLeftMs -= input.deltaTime * 1000;
+      if (this.coyoteCDLeftMs > 0) this.coyoteCDLeftMs -= input.deltaTime * 1000;
+      if (this.apexBonusCDLeftMs > 0) {
+        this.apexBonusCDLeftMs -= input.deltaTime * 1000;
+        if (this.apexBonusCDLeftMs <= 0) {
+          // restore gravity scale
+          result.gravityScale = this.normalGravityScale;
+        }
       }
-      else if (this.horizontalInput < 0)
-      {
-        this.sprite.flipX = true;
-      }
-    }
 
-    float CalculateX(float x, float input)
-    {
-      if (input != 0)
-      {
-        x += input * this.acceleration * Time.deltaTime;
-        x = Mathf.Clamp(x, -this.maxHorizontalSpeed, this.maxHorizontalSpeed);
-      }
-      else
-      {
+      // calculate velocity x
+      if (input.horizontal != 0) {
+        result.velocity.x += input.horizontal * this.acceleration * input.deltaTime;
+        if (Mathf.Abs(result.velocity.x) > this.maxHorizontalSpeed) { // too fast
+          if (result.velocity.x > 0) {
+            result.velocity.x = Mathf.MoveTowards(result.velocity.x, this.maxHorizontalSpeed, this.deceleration * input.deltaTime);
+          } else {
+            result.velocity.x = Mathf.MoveTowards(result.velocity.x, -this.maxHorizontalSpeed, this.deceleration * input.deltaTime);
+          }
+        }
+      } else {
         // no input, slow player down
-        x = Mathf.MoveTowards(x, 0, this.deceleration * Time.deltaTime);
+        result.velocity.x = Mathf.MoveTowards(result.velocity.x, 0, this.deceleration * input.deltaTime);
       }
-      return x;
-    }
 
-    (float y, float gravityScale, bool jump) CalculateY(float oldY, bool jumpBtnDown, bool jumpBtnUp, bool jumpBtnHold)
-    {
-      (float y, float gravityScale, bool jump) result = (oldY, this.body.gravityScale, false);
-
-      if (this.grounded)
-      {
-        if (this.groundCheckerTimer.Finished())
-        {
-          // restore jump count
+      // ground checker
+      if (input.grounded) {
+        if (this.groundCheckerCDLeftMs <= 0) {
+          // CD is over, reset air jump count
           this.airJumpCountLeft = this.maxAirJumpCount;
         }
-        this.coyoteTimer = null;
-      }
-      else
-      {
-        if (this.coyoteTimer == null)
-        {
-          this.coyoteTimer = new Timer(this.coyoteTimeMs);
+        this.shouldCoyoteTime = true;
+      } else { // not grounded
+        if (this.shouldCoyoteTime) {
+          this.coyoteCDLeftMs = this.coyoteTimeMs;
+          this.shouldCoyoteTime = false;
         }
       }
 
-      if ((jumpBtnDown && (this.grounded || !this.coyoteTimer.Finished() || this.airJumpCountLeft > 0)) || (this.holdButtonAutoJump && jumpBtnHold && (this.grounded || !this.coyoteTimer.Finished())))
-      { // apply jump
-        this.onJump.Invoke();
-        this.ClearApexBonusHandle();
-        result.y = 0; // clear velocity y to apply jump force
-        result.gravityScale = this.normalGravityScale;
-        if (!this.grounded && this.coyoteTimer.Finished())
-        {
+      // jump
+      if (
+        (input.jumpBtnDown &&
+          (input.grounded ||
+            this.coyoteCDLeftMs > 0 ||
+            this.airJumpCountLeft > 0)) ||
+        (this.holdButtonAutoJump &&
+          input.jumpBtnHeld &&
+          (input.grounded || this.coyoteCDLeftMs > 0))
+      ) { // should jump
+        result.jumped = true;
+        this.apexBonusCDLeftMs = 0; // not in apex bonus
+        result.velocity.y = 0; // clear velocity y to apply jump force
+        result.gravityScale = this.normalGravityScale; // restore gravity scale
+        // is air jump?
+        if (!input.grounded && this.coyoteCDLeftMs <= 0) {
           this.airJumpCountLeft--;
-          this.onAirJump.Invoke();
+          result.airJumped = true;
         }
-        this.coyoteTimer = new Timer(0); // prevent next coyote jump
-        this.groundCheckerTimer = new Timer(this.coolDownAfterJumpMs);
-        result.jump = true;
-      }
-      else
-      {
-        if (oldY > 0 && jumpBtnUp)
-        { // moving up, and jump early stopped
-          result.gravityScale = this.jumpEarlyEndGravityScale;
-        }
-        else if (this.lastY > 0 && oldY <= 0)
-        { // touch apex
+        // prevent next coyote jump
+        this.shouldCoyoteTime = false;
+        this.coyoteCDLeftMs = 0;
+        // start ground checker CD
+        this.groundCheckerCDLeftMs = this.coolDownAfterJumpMs;
+      } else { // not jump
+        var currentY = input.velocity.y;
+        if (currentY > 0 && input.jumpBtnUp) { // moving up, and jump btn early released
+          result.gravityScale = this.jumpEarlyEndGravityScale; // apply early end gravity scale
+        } else if (this.lastY > 0 && currentY <= 0) { // touch apex
+          // let player slide for a distance
           result.gravityScale = 0;
-          result.y = 0; // let player slide for a distance
-          this.apexBonusHandle = this.SetTimeout(apexBonusTimeMs, () => this.body.gravityScale = this.normalGravityScale);
-        }
-        else if (oldY < 0)
-        { // fall
+          result.velocity.y = 0;
+          this.apexBonusCDLeftMs = this.apexBonusTimeMs;
+        } else if (currentY < 0) { // fall
           // prevent fall too fast
-          result.y = Mathf.Max(oldY, -maxFallSpeedAbs);
+          result.velocity.y = Mathf.Max(currentY, -maxFallSpeedAbs);
         }
       }
+      // update lastY
+      this.lastY = result.velocity.y;
 
-      this.lastY = result.y;
       return result;
-    }
-
-    void ClearApexBonusHandle()
-    {
-      this.apexBonusHandle?.Cancel();
-      this.apexBonusHandle = null;
     }
   }
 }

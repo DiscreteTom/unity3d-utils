@@ -2,14 +2,3 @@
 # yarn lockfile v1
 
 
-"dt.general.collision-checker@https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/CollisionChecker?collision-checker-0.1.0":
-  version "0.1.0"
-  resolved "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/CollisionChecker?collision-checker-0.1.0#96e68e0c1bd90b0e310e04918f8d675322d43b04"
-
-"dt.general.input-helper@https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/InputHelper?input-helper-0.1.1":
-  version "0.1.1"
-  resolved "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/InputHelper?input-helper-0.1.1#01c0d1b84189cbf95b4a88e542f90d11edd761b0"
-
-"dt.general.timer@https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/Timer?timer-0.1.0":
-  version "0.1.0"
-  resolved "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/Timer?timer-0.1.0#a44a0fdda53378551615538a3a5449ce65e4e82c"

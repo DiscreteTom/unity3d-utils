@@ -3,19 +3,40 @@
 ## Installation
 
 ```bash
-yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/2D/PlatformerPlayerController2D?platformer-player-controller-2d-0.1.0"
+yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/2D/PlatformerPlayerController2D?platformer-player-controller-2d-0.2.0"
 ```
-
-[NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes) is also needed.
 
 ## Usage
 
-Add this component to a game object:
+![](img/inspector.png)
 
-![component](img/component.png)
+```cs
+using DT._2D;
+using UnityEngine;
 
-Then add a collision checker component, set it to the controller's Ground Checker:
+public class Player : MonoBehaviour {
+  PlatformerPlayerController2D controller;
+  Rigidbody2D body;
 
-![checker](img/checker.png)
+  void Start() {
+    this.controller = this.GetComponent<PlatformerPlayerController2D>();
+    this.body = this.GetComponent<Rigidbody2D>();
+  }
 
-Finally, make sure input axis/button names are right, then enjoy!
+  void Update() {
+    var result = this.controller.Move(new PlatformerPlayerController2D.MoveInput {
+      horizontal = Input.GetAxisRaw("Horizontal"),
+      jumpBtnDown = Input.GetButtonDown("Jump"),
+      jumpBtnUp = Input.GetButtonUp("Jump"),
+      jumpBtnHeld = Input.GetButton("Jump"),
+      grounded = Physics2D.Raycast(this.transform.position, Vector2.down, 0.6f, LayerMask.GetMask("Default")).collider != null,
+      velocity = this.body.velocity,
+      gravityScale = this.body.gravityScale,
+      deltaTime = Time.deltaTime
+    });
+    this.body.gravityScale = result.gravityScale;
+    this.body.velocity = result.velocity;
+    if (result.jumped) this.body.AddForce(this.controller.jumpForce, ForceMode2D.Impulse);
+  }
+}
+```
