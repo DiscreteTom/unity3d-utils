@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/2D/PlatformerPlayerController2D?platformer-player-controller-2d-0.2.0"
+yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/2D/PlatformerPlayerController2D?platformer-player-controller-2d-0.2.1"
 ```
 
 ## Usage

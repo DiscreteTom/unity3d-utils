@@ -92,18 +92,26 @@ namespace DT._2D {
       }
 
       // calculate velocity x
-      if (input.horizontal != 0) {
-        result.velocity.x += input.horizontal * this.acceleration * input.deltaTime;
-        if (Mathf.Abs(result.velocity.x) > this.maxHorizontalSpeed) { // too fast
-          if (result.velocity.x > 0) {
-            result.velocity.x = Mathf.MoveTowards(result.velocity.x, this.maxHorizontalSpeed, this.deceleration * input.deltaTime);
-          } else {
-            result.velocity.x = Mathf.MoveTowards(result.velocity.x, -this.maxHorizontalSpeed, this.deceleration * input.deltaTime);
-          }
+      if (Mathf.Abs(result.velocity.x) > this.maxHorizontalSpeed) { // too fast
+                                                                    // ignore input, just decelerate
+        if (result.velocity.x > 0) {
+          result.velocity.x = Mathf.MoveTowards(result.velocity.x, this.maxHorizontalSpeed, this.deceleration * input.deltaTime);
+        } else {
+          result.velocity.x = Mathf.MoveTowards(result.velocity.x, -this.maxHorizontalSpeed, this.deceleration * input.deltaTime);
         }
-      } else {
-        // no input, slow player down
-        result.velocity.x = Mathf.MoveTowards(result.velocity.x, 0, this.deceleration * input.deltaTime);
+      } else { // not too fast
+        if (input.horizontal != 0) {
+          result.velocity.x += input.horizontal * this.acceleration * input.deltaTime;
+          // clamp to max speed
+          if (result.velocity.x > this.maxHorizontalSpeed) {
+            result.velocity.x = this.maxHorizontalSpeed;
+          } else if (result.velocity.x < -this.maxHorizontalSpeed) {
+            result.velocity.x = -this.maxHorizontalSpeed;
+          }
+        } else {
+          // no input, slow player down
+          result.velocity.x = Mathf.MoveTowards(result.velocity.x, 0, this.deceleration * input.deltaTime);
+        }
       }
 
       // ground checker
