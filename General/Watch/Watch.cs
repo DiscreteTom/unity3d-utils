@@ -225,7 +225,7 @@ namespace DT.General {
       this.InvokeEvent();
       return result;
     }
-    public int Count => this.Count;
+    public int Count => this.value.Count;
     public bool IsReadOnly => this.value.IsReadOnly;
     public T this[int index] {
       get => this.value[index];
@@ -284,7 +284,7 @@ namespace DT.General {
       this.InvokeEvent();
       return result;
     }
-    public int Count => this.Count;
+    public int Count => this.value.Count;
     public V this[K key] {
       get => this.value[key];
       set {
