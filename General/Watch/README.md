@@ -5,7 +5,7 @@ Create responsive variables.
 ## Installation
 
 ```bash
-yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/Watch?watch-0.2.0"
+yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/Watch?watch-0.2.1"
 ```
 
 ## Usage
@@ -52,6 +52,13 @@ var array = new WatchArray<int>(10);
 list.Value;
 dict.Value;
 array.Value;
+
+// auto trigger change events
+list.Add(1);
+list[0] = 1;
+
+// readonly methods won't trigger change events
+list.IndexOf(1);
 
 // watch for changes & access value to trigger change events
 // same as WatchRef
