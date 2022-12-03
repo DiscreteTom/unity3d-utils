@@ -42,12 +42,27 @@ namespace DT.General {
     /// Add a listener that will be called when the value changes.
     /// </summary>
     public void AddListener(UnityAction f) => this.onChange0.AddListener(f);
+    /// <summary>
+    /// Add a listener that will be called when the value changes, and invoke it immediately.
+    /// </summary>
+    public void AddListenerInvoke(UnityAction f) {
+      this.onChange0.AddListener(f);
+      f.Invoke();
+    }
     public void RemoveListener(UnityAction f) => this.onChange0.RemoveListener(f);
     /// <summary>
     /// Add a listener that will be called when the value changes.
     /// The parameter is the new value.
     /// </summary>
     public void AddListener(UnityAction<T> f) => this.onChange1.AddListener(f);
+    /// <summary>
+    /// Add a listener that will be called when the value changes, and invoke it immediately.
+    /// The parameter is the new value.
+    /// </summary>
+    public void AddListenerInvoke(UnityAction<T> f) {
+      this.onChange1.AddListener(f);
+      f.Invoke(this.value);
+    }
     public void RemoveListener(UnityAction<T> f) => this.onChange1.RemoveListener(f);
     /// <summary>
     /// Add a listener that will be called when the value changes.
@@ -114,11 +129,25 @@ namespace DT.General {
     /// Add a listener that will be called when the value changes.
     /// </summary>
     public void AddListener(UnityAction<WatchRef<T>> f) => this.onChange.AddListener(f);
+    /// <summary>
+    /// Add a listener that will be called when the value changes, and invoke it immediately.
+    /// </summary>
+    public void AddListenerInvoke(UnityAction<WatchRef<T>> f) {
+      this.onChange.AddListener(f);
+      f.Invoke(this);
+    }
     public void RemoveListener(UnityAction<WatchRef<T>> f) => this.onChange.RemoveListener(f);
     /// <summary>
     /// Add a listener that will be called when the value changes.
     /// </summary>
     public void AddListener(UnityAction f) => this.onChange0.AddListener(f);
+    /// <summary>
+    /// Add a listener that will be called when the value changes, and invoke it immediately.
+    /// </summary>
+    public void AddListenerInvoke(UnityAction f) {
+      this.onChange0.AddListener(f);
+      f.Invoke();
+    }
     public void RemoveListener(UnityAction f) => this.onChange0.RemoveListener(f);
 
     /// <summary>
@@ -143,6 +172,7 @@ namespace DT.General {
 
     public Computed(Func<T> compute) : base(compute()) {
       this.compute = compute;
+      this.value = this.compute();
     }
 
     /// <summary>
@@ -154,7 +184,8 @@ namespace DT.General {
     }
 
     void Update() {
-      this.value = this.compute();
+      // use parent class's value setter to trigger events
+      base.Value = this.compute();
     }
   }
 

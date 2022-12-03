@@ -5,7 +5,7 @@ Create responsive variables.
 ## Installation
 
 ```bash
-yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/Watch?watch-0.2.3"
+yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/Watch?watch-0.2.4"
 ```
 
 ## Usage
