@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine.Events;
@@ -197,7 +198,7 @@ namespace DT.General {
   /// <summary>
   /// Watch a list-like type for changes.
   /// </summary>
-  public class WatchIList<L, T> : WatchRef<L> where L : IList<T> {
+  public class WatchIList<L, T> : WatchRef<L>, IList<T> where L : IList<T> {
     LazyComputed<ReadOnlyCollection<T>> readOnlyList;
 
     public WatchIList(L value) : base(value) {
@@ -209,7 +210,7 @@ namespace DT.General {
     /// </summary>
     public ReadOnlyCollection<T> Value => this.readOnlyList.Value;
 
-    // re-expose methods from the list interface
+    #region re-expose methods from the list interface
     public void Add(T item) {
       this.value.Add(item);
       this.InvokeEvent();
@@ -225,6 +226,7 @@ namespace DT.General {
       return result;
     }
     public int Count => this.Count;
+    public bool IsReadOnly => this.value.IsReadOnly;
     public T this[int index] {
       get => this.value[index];
       set {
@@ -241,11 +243,21 @@ namespace DT.General {
       this.value.RemoveAt(index);
       this.InvokeEvent();
     }
+    public void CopyTo(T[] array, int arrayIndex) {
+      this.value.CopyTo(array, arrayIndex);
+    }
+    public IEnumerator<T> GetEnumerator() {
+      return this.value.GetEnumerator();
+    }
+    IEnumerator IEnumerable.GetEnumerator() {
+      return this.value.GetEnumerator();
+    }
+    #endregion
   }
   /// <summary>
   /// Watch a dictionary-like type for changes.
   /// </summary>
-  public class WatchIDictionary<D, K, V> : WatchRef<D> where D : IDictionary<K, V> {
+  public class WatchIDictionary<D, K, V> : WatchRef<D>, IDictionary<K, V> where D : IDictionary<K, V> {
     LazyComputed<ReadOnlyDictionary<K, V>> readOnlyDictionary;
 
     public WatchIDictionary(D value) : base(value) {
@@ -257,7 +269,7 @@ namespace DT.General {
     /// </summary>
     public ReadOnlyDictionary<K, V> Value => this.readOnlyDictionary.Value;
 
-    // re-expose methods from the dictionary interface
+    #region re-expose methods from the dictionary interface
     public void Add(K key, V value) {
       this.value.Add(key, value);
       this.InvokeEvent();
@@ -281,8 +293,37 @@ namespace DT.General {
       }
     }
     public bool TryGetValue(K key, out V value) => this.value.TryGetValue(key, out value);
+    public void Add(KeyValuePair<K, V> item) {
+      this.value.Add(item);
+      this.InvokeEvent();
+    }
+
+    public bool Contains(KeyValuePair<K, V> item) {
+      return this.value.Contains(item);
+    }
+
+    public void CopyTo(KeyValuePair<K, V>[] array, int arrayIndex) {
+      this.value.CopyTo(array, arrayIndex);
+    }
+
+    public bool Remove(KeyValuePair<K, V> item) {
+      var result = this.value.Remove(item);
+      this.InvokeEvent();
+      return result;
+    }
+
+    public IEnumerator<KeyValuePair<K, V>> GetEnumerator() {
+      return this.value.GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() {
+      return this.value.GetEnumerator();
+    }
+
     public ICollection<K> Keys => this.value.Keys;
     public ICollection<V> Values => this.value.Values;
+    public bool IsReadOnly => this.value.IsReadOnly;
+    #endregion
   }
 
   /// <summary>
