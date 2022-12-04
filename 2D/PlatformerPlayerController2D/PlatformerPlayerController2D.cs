@@ -38,6 +38,9 @@ namespace DT._2D {
     float coyoteCDLeftMs;
     float apexBonusCDLeftMs;
 
+    public struct InitInput {
+      public Vector2 velocity;
+    }
     public struct MoveInput {
       public float horizontal;
       public bool jumpBtnDown;
@@ -53,9 +56,17 @@ namespace DT._2D {
       public bool airJumped;
       public float gravityScale;
       public Vector2 velocity;
+      public Vector2 jumpForce;
+
+      public MoveResult Apply(Rigidbody2D body) {
+        body.gravityScale = this.gravityScale;
+        body.velocity = this.velocity;
+        if (this.jumped) body.AddForce(this.jumpForce, ForceMode2D.Impulse);
+        return this;
+      }
     }
 
-    public MoveResult Init(MoveInput input) {
+    public MoveResult Init(InitInput input) {
       this.lastY = input.velocity.y;
       this.airJumpCountLeft = this.maxAirJumpCount;
       this.groundCheckerCDLeftMs = 0;
@@ -68,6 +79,7 @@ namespace DT._2D {
         airJumped = false,
         gravityScale = this.normalGravityScale,
         velocity = input.velocity,
+        jumpForce = this.jumpForce
       };
     }
 
@@ -78,6 +90,7 @@ namespace DT._2D {
         airJumped = false,
         velocity = input.velocity,
         gravityScale = input.gravityScale,
+        jumpForce = this.jumpForce
       };
 
       // update timers

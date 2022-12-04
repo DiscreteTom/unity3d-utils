@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/2D/PlatformerPlayerController2D?platformer-player-controller-2d-0.2.1"
+yarn add "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/2D/PlatformerPlayerController2D?platformer-player-controller-2d-0.3.0"
 ```
 
 ## Usage
@@ -21,10 +21,14 @@ public class Player : MonoBehaviour {
   void Start() {
     this.controller = this.GetComponent<PlatformerPlayerController2D>();
     this.body = this.GetComponent<Rigidbody2D>();
+
+    this.controller.Init(new PlatformerPlayerController2D.InitInput() {
+      velocity = this.body.velocity
+    }).Apply(this.body);
   }
 
   void Update() {
-    var result = this.controller.Move(new PlatformerPlayerController2D.MoveInput {
+    this.controller.Move(new PlatformerPlayerController2D.MoveInput {
       horizontal = Input.GetAxisRaw("Horizontal"),
       jumpBtnDown = Input.GetButtonDown("Jump"),
       jumpBtnUp = Input.GetButtonUp("Jump"),
@@ -33,10 +37,7 @@ public class Player : MonoBehaviour {
       velocity = this.body.velocity,
       gravityScale = this.body.gravityScale,
       deltaTime = Time.deltaTime
-    });
-    this.body.gravityScale = result.gravityScale;
-    this.body.velocity = result.velocity;
-    if (result.jumped) this.body.AddForce(this.controller.jumpForce, ForceMode2D.Impulse);
+    }).Apply(this.body);
   }
 }
 ```
