@@ -51,5 +51,6 @@
     "temp/": true,
     "Temp/": true
   },
-  "editor.detectIndentation": false
+  "editor.detectIndentation": false,
+  "omnisharp.enableEditorConfigSupport": false
 }
