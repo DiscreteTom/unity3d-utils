@@ -1,0 +1,10 @@
+{
+  "name": "dt.general.framework",
+  "version": "0.1.0",
+  "author": "DiscreteTom",
+  "license": "MIT",
+  "dependencies": {
+    "dt.general.composable": "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/Composable?composable-0.1.0",
+    "dt.general.ioc": "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/IoC?ioc-0.1.0"
+  }
+}
