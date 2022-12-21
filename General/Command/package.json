@@ -1,0 +1,9 @@
+{
+  "name": "dt.general.command",
+  "version": "0.1.0",
+  "author": "DiscreteTom",
+  "license": "MIT",
+  "dependencies": {
+    "dt.general.ioc": "https://gitpkg.now.sh/DiscreteTom/unity3d-utils/General/IoC?ioc-0.1.0"
+  }
+}
