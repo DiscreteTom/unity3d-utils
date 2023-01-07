@@ -3,30 +3,32 @@ using System.Collections.Generic;
 using UnityEngine.Events;
 
 namespace DT.General {
-  public interface ISmartEventListener {
-    List<Func<bool>> conditions { get; set; }
-  }
+  public struct AddListenerHelper<ActionType> where ActionType : class {
+    List<Func<bool>> conditions;
+    TSmartEvent<ActionType> smartEvent;
 
-  public class AddListenerHandle {
-    ISmartEventListener listener;
-
-    public AddListenerHandle(ISmartEventListener listener) {
-      this.listener = listener;
+    internal AddListenerHelper(TSmartEvent<ActionType> smartEvent) {
+      this.conditions = new List<Func<bool>>();
+      this.smartEvent = smartEvent;
     }
 
     /// <summary>
     /// Remove the listener from the event when the condition is not met.
     /// </summary>
-    public AddListenerHandle When(Func<bool> condition) {
-      this.listener.conditions.Add(condition);
+    public AddListenerHelper<ActionType> When(Func<bool> condition) {
+      this.conditions.Add(condition);
       return this;
     }
 
     /// <summary>
     /// Remove the listener from the event if obj is null.
     /// </summary>
-    public AddListenerHandle Require(UnityEngine.Object obj) {
+    public AddListenerHelper<ActionType> Require(UnityEngine.Object obj) {
       return this.When(() => obj != null);
+    }
+
+    public void AddListener(ActionType action) {
+      this.smartEvent.AddListener(action, this.conditions.ToArray());
     }
   }
 
@@ -34,9 +36,9 @@ namespace DT.General {
   /// Template of smart event.
   /// </summary>
   public class TSmartEvent<ActionType> where ActionType : class {
-    protected class Listener : ISmartEventListener {
+    protected class Listener {
       public ActionType action;
-      public List<Func<bool>> conditions { get; set; }
+      public Func<bool>[] conditions { get; set; }
     }
     protected List<Listener> listeners;
 
@@ -44,12 +46,25 @@ namespace DT.General {
       this.listeners = new List<Listener>();
     }
 
-    public AddListenerHandle AddListener(ActionType action, params Func<bool>[] conditions) {
-      Listener l = new Listener();
+    /// <summary>
+    /// Remove the listener from the event when the condition is not met.
+    /// </summary>
+    public AddListenerHelper<ActionType> Require(UnityEngine.Object obj) {
+      return new AddListenerHelper<ActionType>(this).Require(obj);
+    }
+
+    /// <summary>
+    /// Remove the listener from the event if obj is null.
+    /// </summary>
+    public AddListenerHelper<ActionType> When(Func<bool> condition) {
+      return new AddListenerHelper<ActionType>(this).When(condition);
+    }
+
+    public void AddListener(ActionType action, params Func<bool>[] conditions) {
+      var l = new Listener();
       l.action = action;
-      l.conditions = new List<Func<bool>>(conditions);
+      l.conditions = conditions;
       this.listeners.Add(l);
-      return new AddListenerHandle(l);
     }
 
     public void RemoveListener(ActionType action) {
@@ -57,13 +72,17 @@ namespace DT.General {
     }
 
     protected void InvokeActions(UnityAction<ActionType> callback) {
-      foreach (var listener in this.listeners) {
-        if (listener.conditions.TrueForAll((c) => c())) {
-          callback.Invoke(listener.action);
-        } else {
+      // check conditions and remove listeners
+      for (int i = this.listeners.Count - 1; i >= 0; i--) {
+        var listener = this.listeners[i];
+        if (!listener.conditions.TrueForAll((c) => c())) {
           // Remove listener if any of the conditions are not met.
-          this.listeners.Remove(listener);
+          this.listeners.RemoveAt(i);
         }
+      }
+
+      foreach (var listener in this.listeners) {
+        callback.Invoke(listener.action);
       }
     }
   }
