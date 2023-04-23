@@ -1,3 +1,7 @@
+# Deprecated
+
+See [UniStart](https://github.com/DiscreteTom/UniStart) and [UniUtils](https://github.com/DiscreteTom/UniUtils) instead.
+
 # unity3d-utils
 
 Unity3D utils.
